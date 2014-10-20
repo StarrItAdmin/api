@@ -15,7 +15,7 @@ class Residences {
      *  }
      */
     public static function getResidences() {
-        Utils.getJSONObjects("Select * from Residences", ['name', 'id']);
+        exit(\wosh\Utils::getJSONObjects("Select * from Residences", ['name', 'id']));
     }
 
 }
