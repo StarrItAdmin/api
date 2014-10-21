@@ -9,7 +9,7 @@ namespace {
          */
         static public function getConnection()
         {
-            $db = mysqli_connect('localhost', 'woshadmin', '1g0taw0sh', 'woshmembership');
+            $db = mysqli_connect('127.0.0.1', 'woshadmin', '1g0taw0sh', 'woshmembership');
             if (mysqli_connect_errno()) {
                 echo("Connect failed: " . mysqli_connect_error());
             }
@@ -51,6 +51,25 @@ namespace {
             $encoded = json_encode($rows);
             header('Content-type: application/json');
             return $encoded;
+        }
+
+
+        static public function checkForExists($query, $error)
+        {
+            $exists = \Utils::getJSONObjects($query);
+            if (strlen($exists) < 3) {
+                http_response_code(400);
+                exit(json_encode(array("error" => $error)));
+            }
+        }
+
+        static public function checkNotExists($query, $error)
+        {
+            $exists = \Utils::getJSONObjects($query);
+            if (strlen($exists) > 2) {
+                http_response_code(400);
+                exit(json_encode(array("error" => $error)));
+            }
         }
     }
 }

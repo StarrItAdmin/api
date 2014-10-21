@@ -37,11 +37,8 @@ class Members {
         $state = $json['state'];
         $zip = $json['zip'];
         $residence = $json['residence'];
-        $exists = \Utils::getJSONObjects("Select * from Members where email = '" . $email . "';");
-        if (strlen($exists) > 2) {
-            http_response_code(400);
-            exit(json_encode(array("error"=>"Email address already in use")));
-        }
+        \Utils::checkNotExists("Select * from Members where email = '" . $email . "';",
+            "Email address already in use");
         $stmt = $con->prepare(
             "Insert into Members (first,last,email,password,token,address,city,state,zip,residence) values (?,?,?,?,?,?,?,?,?,?);");
         $stmt->bind_param('sssssssssi', $first, $last, $email, $password, $token, $address, $city, $state, $zip, $residence);
