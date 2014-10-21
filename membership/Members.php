@@ -44,7 +44,7 @@ class Members {
         $stmt->bind_param('sssssssssi', $first, $last, $email, $password, $token, $address, $city, $state, $zip, $residence);
         $stmt->execute();
         \Utils::closeConnection($con);
-        exit(\Utils::getJSONObjects("Select * from Members where email = '" . $email . "';"));
+        exit(\Utils::getJSONObject("Select * from Members where email = '" . $email . "';"));
     }
 }
 

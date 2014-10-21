@@ -9,7 +9,7 @@ namespace {
          */
         static public function getConnection()
         {
-            $db = mysqli_connect('localhost', 'woshadmin', '1g0taw0sh', 'woshmembership');
+            $db = mysqli_connect('127.0.0.1', 'woshadmin', '1g0taw0sh', 'woshmembership');
             if (mysqli_connect_errno()) {
                 echo("Connect failed: " . mysqli_connect_error());
             }
@@ -31,6 +31,26 @@ namespace {
          */
         static public function getJSONObjects($query, $fields = null)
         {
+            $rows = Utils::buildObjects($query, $fields);
+            $encoded = json_encode($rows);
+            header('Content-type: application/json');
+            return $encoded;
+        }
+
+        /*
+         * Returns object from the database in JSON format.
+         * @param $query the query that should be run to obtain objects.
+         * @param $fields an array of fields that should be returned.
+         */
+        static public function getJSONObject($query, $fields = null)
+        {
+            $rows = Utils::buildObjects($query, $fields);
+            $encoded = json_encode($rows[0]);
+            header('Content-type: application/json');
+            return $encoded;
+        }
+
+        static private function buildObjects($query, $fields = null) {
             $con = Utils::getConnection();
             $result = mysqli_query($con, $query);
             $rows = array();
@@ -48,11 +68,8 @@ namespace {
                 }
             }
             Utils::closeConnection($con);
-            $encoded = json_encode($rows);
-            header('Content-type: application/json');
-            return $encoded;
+            return $rows;
         }
-
 
         static public function checkForExists($query, $error)
         {
