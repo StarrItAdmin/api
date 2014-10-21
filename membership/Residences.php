@@ -1,6 +1,6 @@
 <?php
 
-namespace wosh\membership;
+namespace membership;
 
 include_once $_SERVER['DOCUMENT_ROOT'] . '/Utils.php';
 
@@ -15,7 +15,7 @@ class Residences {
      *  }
      */
     public static function getResidences() {
-        exit(\wosh\Utils::getJSONObjects("Select * from Residences", ['name', 'id']));
+        exit(\Utils::getJSONObjects("Select * from Residences", ['name', 'id']));
     }
 
 }

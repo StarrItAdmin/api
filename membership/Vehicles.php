@@ -1,16 +1,16 @@
 <?php
 
-namespace membership;
+namespace wosh\membership;
 
 include_once $_SERVER['DOCUMENT_ROOT'] . '/Utils.php';
 
-class Members {
+class Vehicles {
 
     /*
-     * Obtains Member objects.
-     */
+         * Obtains Member objects.
+         */
     public static function getMembers() {
-        exit(\Utils::getJSONObjects("Select * from Members"));
+        exit(\wosh\Utils::getJSONObjects("Select * from Members"));
     }
 
     /*
@@ -19,14 +19,14 @@ class Members {
     public static function createMember() {
         $jsonstring = file_get_contents('php://input');
         $json = json_decode($jsonstring,true);
-        \membership\Members::sendMemberToDB($json);
+        \wosh\membership\Members::sendMemberToDB($json);
     }
 
     /*
       Creates a Member in the DB.
     */
     public static function sendMemberToDB($json) {
-        $con = \Utils::getConnection();
+        $con = \wosh\Utils::getConnection();
         $first = $json['first_name'];
         $last = $json['last_name'];
         $email = $json['email'];
@@ -37,7 +37,7 @@ class Members {
         $state = $json['state'];
         $zip = $json['zip'];
         $residence = $json['residence'];
-        $exists = \Utils::getJSONObjects("Select * from Members where email = '" . $email . "';");
+        $exists = \wosh\Utils::getJSONObjects("Select * from Members where email = '" . $email . "';");
         if (strlen($exists) > 2) {
             http_response_code(400);
             exit(json_encode(array("error"=>"Email address already in use")));
@@ -46,8 +46,8 @@ class Members {
             "Insert into Members (first,last,email,password,token,address,city,state,zip,residence) values (?,?,?,?,?,?,?,?,?,?);");
         $stmt->bind_param('sssssssssi', $first, $last, $email, $password, $token, $address, $city, $state, $zip, $residence);
         $stmt->execute();
-        \Utils::closeConnection($con);
-        exit(\Utils::getJSONObjects("Select * from Members where email = '" . $email . "';"));
+        \wosh\Utils::closeConnection($con);
+        exit(\wosh\Utils::getJSONObjects("Select * from Members where email = '" . $email . "';"));
     }
 }
 
