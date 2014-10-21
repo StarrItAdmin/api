@@ -11,8 +11,12 @@ namespace {
 
     $method = $_SERVER['REQUEST_METHOD'];
     $url = $_SERVER['REQUEST_URI'];
-
-    $secondpiece = $url.substr(strrpos($url, "/", 2), strlen($url));
+    $question = strrpos($url, '?');
+    if ($question > 0) {
+        $secondpiece = substr($url, $question);
+    } else {
+        $secondpiece = "";
+    }
     switch ($url) {
         case '/membership/members':
             //Current support for POST and GET methods
@@ -26,7 +30,7 @@ namespace {
                     \membership\Members::getMembers();
                     break;
             }
-        case '/membership/vehicles' + $secondpiece:
+        case '/membership/vehicles' . $secondpiece:
             //Current support for POST and GET methods
             switch ($method) {
                 //POST will create a new member
