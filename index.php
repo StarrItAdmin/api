@@ -8,6 +8,7 @@ namespace {
     include $_SERVER['DOCUMENT_ROOT'] . '/membership/Members.php';
     include $_SERVER['DOCUMENT_ROOT'] . '/membership/Residences.php';
     include $_SERVER['DOCUMENT_ROOT'] . '/membership/Vehicles.php';
+    include $_SERVER['DOCUMENT_ROOT'] . '/membership/Purchases.php';
 
     $method = $_SERVER['REQUEST_METHOD'];
     $url = $_SERVER['REQUEST_URI'];
@@ -53,6 +54,15 @@ namespace {
                 //GET will obtain a list of residences in JSON format
                 case 'GET':
                     \membership\Residences::getResidences();
+                    break;
+            }
+
+        case '/membership/purchases':
+            //Current support for POST methods only
+            switch ($method) {
+                //POST will add a purchase to the transaction table.
+                case 'POST':
+                    \membership\Purchases::addPurchase();
                     break;
             }
     }
