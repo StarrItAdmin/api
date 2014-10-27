@@ -41,6 +41,7 @@ class Vehicles {
         $stmt->execute();
         \Utils::closeConnection($con);
         http_response_code(200);
+        exit(json_encode(array("success" => "success")));
     }
 }
 
