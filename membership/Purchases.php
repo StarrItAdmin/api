@@ -25,9 +25,11 @@ class Purchases
         $con = \Utils::getConnection();
         $member = $json['member_id'];
         $plan = $json['plan_id'];
+        $price = $json['total_price'];
+        $count = $json['count'];
         $stmt = $con->prepare(
-            "Insert into Purchases (member_id,res_plan_id,date) values (?,?,?);");
-        $stmt->bind_param('iis', $member, $plan, date('Y-m-d H:i:s'));
+            "Insert into Purchases (member_id,res_plan_id,date, total_price, count) values (?,?,?,?,?);");
+        $stmt->bind_param('iissi', $member, $plan, date('Y-m-d H:i:s'), $price, $count);
         $stmt->execute();
         \Utils::closeConnection($con);
         http_response_code(200);

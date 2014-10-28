@@ -1,6 +1,8 @@
 <?php
 
+
 namespace {
+    include_once('ip.php');
 
     class Utils
     {
@@ -9,7 +11,7 @@ namespace {
          */
         static public function getConnection()
         {
-            $db = mysqli_connect('localhost', 'woshadmin', '1g0taw0sh', 'woshmembership');
+            $db = mysqli_connect($GLOBALS[$ip], 'woshadmin', '1g0taw0sh', 'woshmembership');
             if (mysqli_connect_errno()) {
                 echo("Connect failed: " . mysqli_connect_error());
             }
