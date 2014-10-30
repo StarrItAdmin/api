@@ -3,6 +3,7 @@
 namespace membership;
 
 include_once $_SERVER['DOCUMENT_ROOT'] . '/Utils.php';
+include_once $_SERVER['DOCUMENT_ROOT'] . '/lib/Stripe.php';
 
 class Members {
 
@@ -20,7 +21,22 @@ class Members {
         $jsonstring = file_get_contents('php://input');
         $json = json_decode($jsonstring,true);
         \membership\Members::sendMemberToDB($json);
+        $residence = \membership\Residences::getResidence($json['residence']);
+        $res_plan = json_decode($residence, true)['plan_name'];
+        \membership\Members::createStripeCustomer($json, $res_plan);
+        exit(\Utils::getJSONObject("Select * from Members where email = '" . $json['email'] . "';"));
     }
+
+	public static function createStripeCustomer($json, $res_plan){
+		\Stripe::setApiKey("sk_test_NTjhMNYlAF8QelmkFbj1hbld");
+
+		// Get the credit card details submitted by the form
+		\Stripe_Customer::create(array(
+				"card" => $json['token'],
+				"plan" => $res_plan,
+				"email" => $json['email'])
+		);
+	}
 
     /*
       Creates a Member in the DB.
@@ -44,7 +60,6 @@ class Members {
         $stmt->bind_param('sssssssssi', $first, $last, $email, $password, $token, $address, $city, $state, $zip, $residence);
         $stmt->execute();
         \Utils::closeConnection($con);
-        exit(\Utils::getJSONObject("Select * from Members where email = '" . $email . "';"));
     }
 }
 
