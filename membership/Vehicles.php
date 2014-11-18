@@ -10,6 +10,7 @@ class Vehicles {
      * Obtains Vehicle objects.
      */
     public static function getVehicles($id) {
+        \membership\authentication\TokenValidator::validate();
         exit(\Utils::getJSONObjects("Select * from Vehicles where mid=" . $id . ";"));
     }
 

@@ -50,11 +50,7 @@ class Members {
 		\Stripe_Customer::create(array(
 				"card" => $json['token'],
 				"plan" => $res_plan,
-				"email" => urlencode($json['email']),
-				"name" => $json['first_name'] . $json['last_name'],
-				"residence" => $json['residence'],
-				"unit" => $json['residence-unit'],
-				"quantity" => $json['purchaseQuantity'])
+				"email" => $json['email'])
 		);
 	}
 

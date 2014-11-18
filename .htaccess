@@ -1,0 +1,23 @@
+
+
+RewriteEngine on
+
+Options +FollowSymLinks
+IndexIgnore */*
+# Turn on the RewriteEngine
+RewriteEngine On
+RewriteCond %{HTTP:Authorization} ^(.*)
+RewriteRule .* - [e=HTTP_AUTHORIZATION:%1]
+#  Rules
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule . index.php
+
+RewriteCond %{HTTP_HOST} ^api\.getawosh\.com$ [OR]
+RewriteCond %{HTTP_HOST} ^www\.api\.getawosh\.com$
+RewriteRule ^\!\^\/index\\\.php\/?(.*)$ "http\:\/\/api\.getawosh\.com\/index\.php$1" [R=301,L]
+
+Header add Access-Control-Allow-Origin "http://beta.getawosh.com"
+Header add Access-Control-Allow-Headers "origin, x-requested-with,Content-Type"
+Header add Access-Control-Allow-Methods "PUT, GET, POST, DELETE, OPTIONS"
+AddType text/javascript .js

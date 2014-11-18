@@ -14,7 +14,6 @@ namespace {
 
     $method = $_SERVER['REQUEST_METHOD'];
     $url = $_SERVER['REQUEST_URI'];
-
     if (strpos($url, '/membership/members') !== false) {
         //Current support for POST and GET methods
         switch ($method) {
@@ -37,7 +36,7 @@ namespace {
             case 'PUT':
                 \membership\Members::updateMember();
         }
-    } elseif (strpos($url, '/membership/vehicles' !== false)) {
+    } elseif (strpos($url, '/membership/vehicles') !== false) {
         //Current support for POST and GET methods
         switch ($method) {
             //POST will create a new member

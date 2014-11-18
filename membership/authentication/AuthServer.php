@@ -3,18 +3,19 @@
 namespace membership\authentication;
 
 class AuthServer {
-    protected $dsn = 'mysql:dbname=woshmembership;host=localhost';
+    private $dsn;
     private $username = 'woshadmin';
     private $password = '1g0taw0sh';
 
     public function initialize() {
+        $this->dsn = 'mysql:dbname=woshmembership;host=' . $GLOBALS['ip'];
         // error reporting (this is a demo, after all!)
         ini_set('display_errors', 1);
         error_reporting(E_ALL);
         date_default_timezone_set('America/Los_Angeles');
 
         // Autoloading (composer is preferred, but for this example let's just do this)
-        require_once($_SERVER['DOCUMENT_ROOT'] . '/oauth2-server-php/src/OAuth2/Autoloader.php');
+        require_once($_SERVER['DOCUMENT_ROOT'] . '/OAuth2/Autoloader.php');
         \OAuth2\Autoloader::register();
 
         // $dsn is the Data Source Name for your database, for example "mysql:dbname=my_oauth2_db;host=localhost"

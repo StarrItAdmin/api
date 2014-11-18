@@ -33,7 +33,7 @@ namespace {
          */
         static public function getJSONObjects($query, $fields = null)
         {
-            $rows = Utils::buildObjects($query, $fields);
+            $rows = Utils::buildObjects($query, null, $fields);
             $encoded = json_encode($rows);
             header('Content-type: application/json');
             return $encoded;
@@ -52,18 +52,20 @@ namespace {
             return $encoded;
         }
 
-        static private function buildObjects($query, $id = null, $fields = null) {
+        static private function buildObjects($query, $id = null, $fields = null)
+        {
             $con = Utils::getConnection();
             $stmt = $con->prepare($query);
             if ($id != null) {
                 $stmt->bind_param('i', $id);
             }
             $stmt->execute();
-            $result = $stmt->get_result();
+            $row = Utils::bind_result_array($stmt);
             $rows = array();
-            while ($row = $result->fetch_assoc()) {
+            $count = 0;
+            while ($stmt->fetch()) {
                 if (is_null($fields)) {
-                    $rows[] = $row;
+                    $rows[$count] = $row;
                 } else {
                     $dict = array();
                     foreach ($fields as $field) {
@@ -73,9 +75,33 @@ namespace {
                     }
                     $rows[] = $dict;
                 }
+                $row = Utils::bind_result_array($stmt);
+                $count++;
             }
             Utils::closeConnection($con);
             return $rows;
+        }
+
+        static function bind_result_array($stmt)
+        {
+            $meta = $stmt->result_metadata();
+            $result = array();
+            while ($field = $meta->fetch_field())
+            {
+                $result[$field->name] = NULL;
+                $params[] = &$result[$field->name];
+            }
+
+            call_user_func_array(array($stmt, 'bind_result'), $params);
+            return $result;
+        }
+
+        /**
+         * Returns a copy of an array of references
+         */
+        static function getCopy($row)
+        {
+            return array_map(create_function('$a', 'return $a;'), $row);
         }
 
         static public function checkForExists($query, $error)
@@ -94,30 +120,6 @@ namespace {
                 http_response_code(400);
                 exit(json_encode(array("error" => $error)));
             }
-        }
-
-        static public function updateObject($type, $json, $fields) {
-            $id = $json['id'];
-            $setPart = "";
-            foreach($json as $key => $param) {
-                if (in_array($key, $fields) && $key != "id") {
-                    $setPart .= " " . $key . "=" . $param . ",";
-                }
-            }
-            echo($setPart);
-            if (strlen($setPart) == 0) {
-                return;
-            }
-            $con = Utils::getConnection();
-
-            $query = "update " . $type . " set " . substr($setPart, sizeof($setPart) - 1)
-                . " where id = ?";
-
-            $stmt = $con->prepare($query);
-            if ($id != null) {
-                $stmt->bind_param('i', $id);
-            }
-            $stmt->execute();
         }
     }
 }
