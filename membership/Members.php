@@ -12,12 +12,12 @@ class Members {
      * Obtains Member objects.
      */
     public static function getMembers() {
-        \membership\authentication\TokenValidator::validate();
+        //\membership\authentication\TokenValidator::validate();
         exit(\Utils::getJSONObjects("Select * from Members"));
     }
 
     public static function getMember($id) {
-        \membership\authentication\TokenValidator::validate();
+        //\membership\authentication\TokenValidator::validate();
         exit(\Utils::getJSONObject("Select * from Members where id = ?", $id));
     }
 
