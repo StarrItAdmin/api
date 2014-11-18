@@ -3,7 +3,7 @@
 namespace membership\authentication;
 
 class AuthServer {
-    protected $dsn = 'mysql:dbname=woshmembership;host=127.0.0.1';
+    protected $dsn = 'mysql:dbname=woshmembership;host=localhost';
     private $username = 'woshadmin';
     private $password = '1g0taw0sh';
 
