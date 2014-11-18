@@ -3,6 +3,7 @@
 namespace membership;
 
 include_once $_SERVER['DOCUMENT_ROOT'] . '/Utils.php';
+include_once $_SERVER['DOCUMENT_ROOT'] . '/membership/authentication/TokenValidator.php';
 include_once $_SERVER['DOCUMENT_ROOT'] . '/lib/Stripe.php';
 
 class Members {
@@ -11,7 +12,22 @@ class Members {
      * Obtains Member objects.
      */
     public static function getMembers() {
+        \membership\authentication\TokenValidator::validate();
         exit(\Utils::getJSONObjects("Select * from Members"));
+    }
+
+    public static function getMember($id) {
+        \membership\authentication\TokenValidator::validate();
+        exit(\Utils::getJSONObject("Select * from Members where id = ?", $id));
+    }
+
+    public static function updateMember() {
+        \membership\authentication\TokenValidator::validate();
+        $jsonstring = file_get_contents('php://input');
+        $json = json_decode($jsonstring,true);
+        \Utils::updateObject("Members", $json, array("first_name", "last_name"));
+        \membership\Members::updateMemberInDB($json);
+        exit(\Utils::getJSONObject("Select * from Members where id = '", $json['id']));
     }
 
     /*
@@ -60,6 +76,13 @@ class Members {
         $stmt->bind_param('sssssssssi', $first, $last, $email, $password, $token, $address, $city, $state, $zip, $residence);
         $stmt->execute();
         \Utils::closeConnection($con);
+    }
+
+    /*
+      Creates a Member in the DB.
+    */
+    public static function updateMemberInDB($json) {
+
     }
 }
 

@@ -11,7 +11,7 @@ namespace {
          */
         static public function getConnection()
         {
-            $db = mysqli_connect($GLOBALS[$ip], 'woshadmin', '1g0taw0sh', 'woshmembership');
+            $db = mysqli_connect($GLOBALS['ip'], 'woshadmin', '1g0taw0sh', 'woshmembership');
             if (mysqli_connect_errno()) {
                 echo("Connect failed: " . mysqli_connect_error());
             }
@@ -44,17 +44,22 @@ namespace {
          * @param $query the query that should be run to obtain objects.
          * @param $fields an array of fields that should be returned.
          */
-        static public function getJSONObject($query, $fields = null)
+        static public function getJSONObject($query, $id = null, $fields = null)
         {
-            $rows = Utils::buildObjects($query, $fields);
+            $rows = Utils::buildObjects($query, $id, $fields);
             $encoded = json_encode($rows[0]);
             header('Content-type: application/json');
             return $encoded;
         }
 
-        static private function buildObjects($query, $fields = null) {
+        static private function buildObjects($query, $id = null, $fields = null) {
             $con = Utils::getConnection();
-            $result = mysqli_query($con, $query);
+            $stmt = $con->prepare($query);
+            if ($id != null) {
+                $stmt->bind_param('i', $id);
+            }
+            $stmt->execute();
+            $result = $stmt->get_result();
             $rows = array();
             while ($row = $result->fetch_assoc()) {
                 if (is_null($fields)) {
@@ -89,6 +94,30 @@ namespace {
                 http_response_code(400);
                 exit(json_encode(array("error" => $error)));
             }
+        }
+
+        static public function updateObject($type, $json, $fields) {
+            $id = $json['id'];
+            $setPart = "";
+            foreach($json as $key => $param) {
+                if (in_array($key, $fields) && $key != "id") {
+                    $setPart .= " " . $key . "=" . $param . ",";
+                }
+            }
+            echo($setPart);
+            if (strlen($setPart) == 0) {
+                return;
+            }
+            $con = Utils::getConnection();
+
+            $query = "update " . $type . " set " . substr($setPart, sizeof($setPart) - 1)
+                . " where id = ?";
+
+            $stmt = $con->prepare($query);
+            if ($id != null) {
+                $stmt->bind_param('i', $id);
+            }
+            $stmt->execute();
         }
     }
 }
