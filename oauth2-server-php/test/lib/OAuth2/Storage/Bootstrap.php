@@ -209,13 +209,13 @@ class Bootstrap
     {
         if (!$this->cassandra) {
             if (class_exists('phpcassa\ColumnFamily')) {
-                $cassandra = new \phpcassa\Connection\ConnectionPool('oauth2_test', array('127.0.0.1:9160'));
+                $cassandra = new \phpcassa\Connection\ConnectionPool('oauth2_test', array('localhost:9160'));
                 if ($this->testCassandraConnection($cassandra)) {
                     $this->removeCassandraDb();
                     $this->cassandra = new Cassandra($cassandra);
                     $this->createCassandraDb($this->cassandra);
                 } else {
-                    $this->cassandra = new NullStorage('Cassandra', 'Unable to connect to cassandra server on "127.0.0.1:9160"');
+                    $this->cassandra = new NullStorage('Cassandra', 'Unable to connect to cassandra server on "localhost:9160"');
                 }
             } else {
                 $this->cassandra = new NullStorage('Cassandra', 'Missing cassandra library. Please run "composer.phar require thobbs/phpcassa:dev-master"');
