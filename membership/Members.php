@@ -22,12 +22,18 @@ class Members {
     }
 
     public static function updateMember() {
-        \membership\authentication\TokenValidator::validate();
+        //\membership\authentication\TokenValidator::validate();
         $jsonstring = file_get_contents('php://input');
-        $json = json_decode($jsonstring,true);
-        \Utils::updateObject("Members", $json, array("first_name", "last_name"));
-        \membership\Members::updateMemberInDB($json);
-        exit(\Utils::getJSONObject("Select * from Members where id = '", $json['id']));
+        $json = json_decode($jsonstring, true);
+        if (!isset($json['id'])) {
+            http_response_code(400);
+            exit(json_encode(array("error" => "In order to update a Member, id must be present")));
+        }
+        $id = $json['id'];
+
+        \Utils::updateObject($id, "Members", $json, array("first", "last",
+            "residence", "address", "city", "state", "zip", "unit", "spaces", "password"));
+        exit(\Utils::getJSONObject("Select * from Members where id = ?", $id));
     }
 
     /*
@@ -76,13 +82,6 @@ class Members {
         $stmt->bind_param('sssssssssi', $first, $last, $email, $password, $token, $address, $city, $state, $zip, $residence);
         $stmt->execute();
         \Utils::closeConnection($con);
-    }
-
-    /*
-      Creates a Member in the DB.
-    */
-    public static function updateMemberInDB($json) {
-
     }
 }
 

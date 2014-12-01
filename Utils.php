@@ -121,6 +121,30 @@ namespace {
                 exit(json_encode(array("error" => $error)));
             }
         }
+
+        static public function updateObject($id, $type, $json, $fields) {
+            $setPart = "";
+            foreach($json as $key => $param) {
+                if (in_array($key, $fields) && $key != "id") {
+                    if ($key == 'password') {
+                        $param = md5($param);
+                    }
+                    $setPart .= " `" . $key . "`='" . $param . "',";
+                }
+            }
+            if (sizeof($setPart) == 0) {
+                return;
+            }
+            $con = Utils::getConnection();
+            $query = "update " . $type . " set " . substr($setPart, 0, strlen($setPart) - 1)
+                . " where id = ?";
+            $stmt = $con->prepare($query);
+            if ($id != null) {
+                $stmt->bind_param('i', $id);
+            }
+            $stmt->execute();
+            \Utils::closeConnection($con);
+        }
     }
 }
 ?>
