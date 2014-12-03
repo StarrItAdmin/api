@@ -51,13 +51,14 @@ class Members {
     }
 
 	public static function createStripeCustomer($json, $res_plan){
-		\Stripe::setApiKey("sk_test_NTjhMNYlAF8QelmkFbj1hbld");
+		\Stripe::setApiKey("sk_live_wvRQLwcxoffeWrK2WLAwBEK8");
 
 		// Get the credit card details submitted by the form
 		\Stripe_Customer::create(array(
 				"card" => $json['token'],
 				"plan" => $res_plan,
-				"email" => $json['email'])
+				"email" => $json['email'],
+                                "quantity" => $json['purchaseQuantity'])
 		);
 	}
 
