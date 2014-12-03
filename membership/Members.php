@@ -38,6 +38,7 @@ class Members {
 
     /*
       Parses input JSON for creation of member.
+
     */
     public static function createMember() {
         $jsonstring = file_get_contents('php://input');
@@ -70,10 +71,10 @@ class Members {
         $email = $json['email'];
         $password = md5($json['password']);
         $token = $json['token'];
-        $address = $json['address'];
-        $city = $json['city'];
-        $state = $json['state'];
-        $zip = $json['zip'];
+        $address = isset($json['address']) ? $json['address'] : null;
+        $city = isset($json['city']) ? $json['city'] : null;
+        $state = isset($json['state']) ? $json['state'] : null;
+        $zip = isset($json['zip']) ? $json['zip'] : null;
         $residence = $json['residence'];
         \Utils::checkNotExists("Select * from Members where email = '" . $email . "';",
             "Email address already in use");
